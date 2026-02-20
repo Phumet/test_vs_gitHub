@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Mail, Copy } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/atoms";
 
 export default function SuccessPage({
   searchParams,

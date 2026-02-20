@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/db";
 import { config } from "@/lib/config";
-import { RegistrationForm } from "@/components/RegistrationForm";
-import { CapacityIndicator } from "@/components/CapacityIndicator";
+import { RegistrationForm, CapacityIndicator } from "@/components/organisms";
 import { formatDate, formatTime } from "@/lib/utils";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import Link from "next/link";

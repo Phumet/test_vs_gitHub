@@ -1,10 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Input, Button, Label } from "@/components/atoms";
 import { Lock, Loader2 } from "lucide-react";
 import Cookies from "js-cookie";
 
