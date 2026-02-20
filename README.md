@@ -6,6 +6,37 @@
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 
+## 📑 Table of Contents
+
+- [Recent Updates](#-recent-updates-feb-2026)
+- [Features](#-features-mvp)
+- [Tech Stack](#️-tech-stack)
+- [Component Architecture](#-component-architecture---atomic-design)
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+- [Project Structure](#️-project-structure)
+- [Database Schema](#️-database-schema)
+- [Available Scripts](#-available-scripts)
+- [Usage](#-usage)
+- [Contributing](#-contributing)
+
+---
+
+## 🆕 Recent Updates (Feb 2026)
+
+### ⚛️ Refactored to Atomic Design Pattern
+- ✨ **Restructured components**: Organized into atoms, molecules, organisms, and templates
+- 🎨 **New atoms**: Text, Spinner, Icon components with variants
+- 🧩 **New molecules**: FormField, AlertBox, ProgressBar for better reusability
+- 🔄 **Updated organisms**: RegistrationForm and CapacityIndicator now use composition
+- 📝 **Documentation**: Added comprehensive Atomic Design guide and Copilot instructions
+
+**Benefits:**
+- ✅ Better code organization and maintainability
+- ✅ Improved component reusability
+- ✅ Consistent UI patterns across the app
+- ✅ Enhanced developer experience with Copilot
+
 ---
 
 ## ✨ Features (MVP)
@@ -27,7 +58,35 @@
 - **Database**: PostgreSQL 15 + Prisma ORM
 - **Email**: Resend
 - **Auth**: Simple password-based (จะปรับเป็น OAuth ใน v1.1)
+- **Component Architecture**: **Atomic Design Pattern** 🎨
 - **Deployment**: Vercel (recommended)
+
+## 🎨 Component Architecture - Atomic Design
+
+โปรเจกต์นี้ใช้ **Atomic Design Pattern** เพื่อการจัดการ components ที่มีประสิทธิภาพ:
+
+```
+components/
+├── atoms/       # พื้นฐาน: Button, Input, Label, Text, Spinner, Icon
+├── molecules/   # ระดับกลาง: FormField, AlertBox, ProgressBar
+├── organisms/   # ซับซ้อน: RegistrationForm, CapacityIndicator
+└── templates/   # หน้า: RegistrationTemplate
+```
+
+**ตัวอย่างการใช้งาน:**
+
+```typescript
+// ใช้ FormField (molecule) แทน Label + Input + Error แยกกัน
+<FormField 
+  label="อีเมล" 
+  type="email" 
+  required 
+  error={errors.email?.message}
+  {...register("email")} 
+/>
+```
+
+📚 **เอกสารเพิ่มเติม**: อ่านที่ [ATOMIC_DESIGN.md](ATOMIC_DESIGN.md) และ [.github/copilot-instructions.md](.github/copilot-instructions.md)
 
 ---
 
@@ -177,10 +236,11 @@ copilot-seminar-mvp/
 │   ├── layout.tsx              # Root layout
 │   └── globals.css             # Global styles
 │
-├── components/
-│   ├── ui/                     # UI components (Button, Input, Label)
-│   ├── RegistrationForm.tsx
-│   └── CapacityIndicator.tsx
+├── components/                 # ⚛️ Atomic Design Structure
+│   ├── atoms/                  # พื้นฐาน: Button, Input, Label, Text, etc.
+│   ├── molecules/              # ระดับกลาง: FormField, AlertBox, etc.
+│   ├── organisms/              # ซับซ้อน: RegistrationForm, etc.
+│   └── templates/              # หน้า: RegistrationTemplate
 │
 ├── lib/
 │   ├── db.ts                   # Prisma client
@@ -193,6 +253,11 @@ copilot-seminar-mvp/
 │   ├── schema.prisma           # Database schema
 │   └── seed.ts                 # Seed data
 │
+├── .github/
+│   └── copilot-instructions.md # Copilot instructions (full)
+│
+├── ATOMIC_DESIGN.md            # Atomic Design documentation
+├── .copilot-instructions.md    # Copilot quick reference
 ├── .env.local                  # Environment variables
 ├── docker-compose.yml          # PostgreSQL setup
 ├── package.json
@@ -418,11 +483,74 @@ Features ที่จะเพิ่มในเวอร์ชันถัด�
 
 ## 🤝 Contributing
 
+### Development Guidelines
+
+โปรเจกต์นี้ใช้ **Atomic Design Pattern** ในการพัฒนา components โปรดปฏิบัติตามหลักการเหล่านี้:
+
+#### 🔹 เมื่อสร้าง Component ใหม่:
+
+1. **กำหนดระดับ Atomic ก่อน**:
+   - **Atom**: ถ้าเป็น UI element พื้นฐานที่ไม่สามารถแบ่งย่อยได้
+   - **Molecule**: ถ้าเป็นการรวม atoms 2-3 ตัวเข้าด้วยกัน
+   - **Organism**: ถ้ามีความซับซ้อนและใช้ molecules หลายตัว
+
+2. **ตั้งชื่อไฟล์**: ใช้ `kebab-case.tsx` (เช่น `form-field.tsx`)
+
+3. **ใช้ TypeScript**: กำหนด interface หรือ type ทุกครั้ง
+
+4. **Atoms**: ใช้ `React.forwardRef` และรองรับ `className`
+
+5. **Export**: เพิ่มใน `index.ts` ของแต่ละระดับ
+
+#### 🔹 Import Convention:
+
+```typescript
+// ✅ ถูกต้อง
+import { Button, Input } from "@/components/atoms";
+import { FormField } from "@/components/molecules";
+
+// ❌ ผิด (old structure)
+import { Button } from "@/components/ui/button";
+```
+
+#### 🔹 ตัวอย่าง Component ใหม่:
+
+```typescript
+// components/atoms/badge.tsx
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+const badgeVariants = cva("...", {
+  variants: { variant: { default: "...", } },
+});
+
+export interface BadgeProps 
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
+
+export function Badge({ className, variant, ...props }: BadgeProps) {
+  return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
+}
+
+// เพิ่มใน components/atoms/index.ts
+export { Badge } from "./badge";
+export type { BadgeProps } from "./badge";
+```
+
+📚 **อ่านเพิ่มเติม**: 
+- [Atomic Design Documentation](ATOMIC_DESIGN.md)
+- [GitHub Copilot Instructions](.github/copilot-instructions.md)
+
+### Pull Request Process
+
 1. Fork the repository
 2. Create feature branch: `git checkout -b feature/AmazingFeature`
-3. Commit changes: `git commit -m 'Add AmazingFeature'`
-4. Push to branch: `git push origin feature/AmazingFeature`
-5. Open Pull Request
+3. Follow Atomic Design guidelines
+4. Update README.md if needed
+5. Commit changes: `git commit -m 'Add AmazingFeature'`
+6. Push to branch: `git push origin feature/AmazingFeature`
+7. Open Pull Request
 
 ---
 
